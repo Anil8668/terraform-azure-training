@@ -1,32 +1,15 @@
-provider "azurerm" {
-  features {}
-  subscription_id = "4a42265d-a131-4bb0-9cce-ced76a68702f"
+resource "azurerm_storage_account" "storage" {
+  name                     = var.storage_account_name
+  resource_group_name      = var.rg_name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
 }
 
-module "rg" {
-  source   = "./modules/resource_group"
-  rg_name  = var.rg_name
-  location = var.location
+output "storage_id" {
+  value = azurerm_storage_account.storage.id
 }
 
-module "storage" {
-  source               = "./modules/storage_account"
-  rg_name              = var.rg_name
-  location             = var.location
-  storage_account_name = var.storage_account_name
-}
-
-module "acr" {
-  source   = "./modules/acr"
-  rg_name  = module.rg.rg_name
-  location = var.location
-  acr_name = var.acr_name
-}
-
-module "network" {
-  source      = "./modules/network"
-  rg_name     = module.rg.rg_name
-  location    = var.location
-  vnet_name   = var.vnet_name
-  subnet_name = var.subnet_name
-}
+variable "storage_account_name" {}
+variable "rg_name" {}
+variable "location" {}
